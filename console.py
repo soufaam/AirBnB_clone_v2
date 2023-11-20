@@ -138,7 +138,6 @@ class HBNBCommand(cmd.Cmd):
                         arg_dic[key] = float(value)
             new_instance = HBNBCommand.classes[result[0]]()
             new_instance.__dict__.update(arg_dic)
-            print(new_instance)
             storage.save()
         print(new_instance.id)
         storage.save()
