@@ -126,6 +126,8 @@ class HBNBCommand(cmd.Cmd):
             arg_dic = {}
             for idx in range(1, len(result)):
                 splited = result[idx].split('=')
+                if ' ' in splited or len(splited) < 2:
+                    continue
                 key = splited[0]
                 value = splited[1]
                 if value.startswith('"') and value.endswith('"'):
