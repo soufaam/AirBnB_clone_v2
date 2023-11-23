@@ -237,6 +237,7 @@ class HBNBCommand(cmd.Cmd):
                 if commands[0] in key.split('.')[0]:
                     lst.append(val.__str__())
             print(lst)
+
     def help_all(self):
         """ Help information for the all command """
         print("Shows all objects, or all of a class")
