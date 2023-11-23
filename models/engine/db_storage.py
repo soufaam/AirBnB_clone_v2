@@ -36,7 +36,7 @@ class DBStorage:
                 for row in query:
                     return_dict[f'{class_name}.{row.id}'] = dict(row.__dict__)
             return return_dict
-        
+
     def save(self):
         """save(self): commit all changes of the
         current database session (self.__session)"""
@@ -57,8 +57,8 @@ class DBStorage:
 
     def reload(self):
         """create all tables in the database
-        (feature of SQLAlchemy) (WARNING: all 
-        classes wwho inherit from Base must be 
+        (feature of SQLAlchemy) (WARNING: all
+        classes wwho inherit from Base must be
         imported before calling """
         from models.base_model import Base
         from models.amenity import Amenity
@@ -68,5 +68,6 @@ class DBStorage:
         from models.place import Place
         from models.review import Review
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit= False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         self.__session = scoped_session(session_factory)
