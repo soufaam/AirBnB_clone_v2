@@ -35,6 +35,7 @@ class DBStorage:
                 class_name = table.mapped_class.__name__
                 for row in query:
                     return_dict[f'{class_name}.{row.id}'] = dict(row.__dict__)
+                print(return_dict)
             return return_dict
 
     def save(self):
@@ -45,7 +46,7 @@ class DBStorage:
     def new(self, obj):
         """add the object to the current
         database session (self.__session)"""
-        self.add(obj)
+        self.__session.add(obj)
         self.save()
 
     def delete(self, obj=None):
