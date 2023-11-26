@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 """New engine DBStorage: (models/engine/db_storage.py)"""
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 import os
+from models.base_model import Base
 
 
 class DBStorage:
@@ -13,7 +14,7 @@ class DBStorage:
 
     def __init__(self) -> None:
         """Init constructor method"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:13306/{}'
                                       .format(os.environ['HBNB_MYSQL_USER'],
                                               os.environ['HBNB_MYSQL_PWD'],
                                               os.environ['HBNB_MYSQL_HOST'],
@@ -28,14 +29,32 @@ class DBStorage:
     def all(self, cls=None):
         """all objects depending of the class name"""
         return_dict = {}
+        mapped_class = {"cities": "City",
+                        "states": "State",
+                        "users": "User"}
+        db_items = self.__metadata.tables.items()
+
         if cls is None:
-            db_items = self.__metadata.tables.items()
             for table_name, table in db_items:
-                query = self.__session.query(table)
-                class_name = table.mapped_class.__name__
-                for row in query:
-                    return_dict[f'{class_name}.{row.id}'] = dict(row.__dict__)
-                print(return_dict)
+                table_column = self.__metadata.tables[table_name].c.keys()
+                if table_name in mapped_class.keys():
+                    query = self.__session.query(table).all()
+                    dic_table = {}
+                    for row in query:
+                        dic_table.update(dict(zip(table_column, list(row))))
+                        if '_sa_instance_state' in dic_table.keys():
+                            dic_table.pop('_sa_instance_state')
+                        return_dict[f"{mapped_class[table_name]}.{row.id}"]\
+                            = dic_table
+            return return_dict
+
+        else:
+            query = self.__session.query(cls)
+            for row in query:
+                dic = dict(row.__dict__)
+                if '_sa_instance_state' in dic:
+                    dic.pop('_sa_instance_state')
+                    return_dict[f'{cls.__name__}.{row.id}'] = dic
             return return_dict
 
     def save(self):

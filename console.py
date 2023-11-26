@@ -234,7 +234,8 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
         elif len(commands) == 1:
-            for key, val in storage.all().items():
+            class_obj = globals()[commands[0]]
+            for key, val in storage.all(class_obj).items():
                 if commands[0] in key.split('.')[0]:
                     lst.append(val.__str__())
             print(lst)

@@ -14,10 +14,11 @@ class FileStorage:
         cls_obj = {}
         if cls is None:
             return fileobj_dict
-        name = cls.__name__
         for key, value in fileobj_dict.items():
-            if name in key:
+            if cls in key:
                 cls_obj[key] = value
+        if '_sa_instance_state' in cls_obj.keys():
+            cls_obj.pop('_sa_instance_state')
         return cls_obj
 
     def new(self, obj):
@@ -54,6 +55,8 @@ class FileStorage:
                 temp = json.load(f)
                 for key, val in temp.items():
                     self.all()[key] = classes[val['__class__']](**val)
+                    if '_sa_instance_state' in FileStorage.__objects.keys():
+                        FileStorage.__objects.pop('_sa_instance_state')
         except FileNotFoundError:
             pass
 
