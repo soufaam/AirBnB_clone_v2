@@ -14,7 +14,7 @@ class DBStorage:
 
     def __init__(self) -> None:
         """Init constructor method"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:13306/{}'
                                       .format(os.environ['HBNB_MYSQL_USER'],
                                               os.environ['HBNB_MYSQL_PWD'],
                                               os.environ['HBNB_MYSQL_HOST'],
@@ -44,7 +44,7 @@ class DBStorage:
                         dic_table.update(dict(zip(table_column, list(row))))
                         if '_sa_instance_state' in dic_table.keys():
                             dic_table.pop('_sa_instance_state')
-                        return_dict[f"{mapped_class[table_name]}.{row.id}"]\
+                        return_dict["{}.{}".format(mapped_class[table_name], row.id)]\
                             = dic_table
             return return_dict
 
@@ -54,7 +54,7 @@ class DBStorage:
                 dic = dict(row.__dict__)
                 if '_sa_instance_state' in dic:
                     dic.pop('_sa_instance_state')
-                    return_dict[f'{cls.__name__}.{row.id}'] = dic
+                return_dict[f'{cls.__name__}.{row.id}'] = dic
             return return_dict
 
     def save(self):

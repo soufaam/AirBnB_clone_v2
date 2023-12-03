@@ -15,7 +15,7 @@ class FileStorage:
         if cls is None:
             return fileobj_dict
         for key, value in fileobj_dict.items():
-            if cls in key:
+            if cls.__name__ in key:
                 cls_obj[key] = value
         if '_sa_instance_state' in cls_obj.keys():
             cls_obj.pop('_sa_instance_state')

@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import os
 
 
 class HBNBCommand(cmd.Cmd):
@@ -226,19 +227,38 @@ class HBNBCommand(cmd.Cmd):
 
         commands = line.split()
         lst = []
+        lst_db = []
+        db = os.environ['HBNB_TYPE_STORAGE']
         if commands == []:
-            for value in storage.all().values():
-                lst.append(value.__str__())
-            print(lst)
+            for key, value in storage.all().items():
+                if db == 'db':
+                    cls_name = key.split('.')[0]
+                    id = key.split('.')[1]
+                    str_format = '[{}] ({}) {}'.format(cls_name, id, value)
+                    lst_db.append(str_format)
+                else:
+                    lst.append(value.__str__())
+            if lst_db:
+                print(lst_db)
+            else:
+                print(lst)
         elif commands[0] not in self.classes.keys():
             print("** class doesn't exist **")
             return
         elif len(commands) == 1:
             class_obj = globals()[commands[0]]
-            for key, val in storage.all(class_obj).items():
-                if commands[0] in key.split('.')[0]:
-                    lst.append(val.__str__())
-            print(lst)
+            for key, value in storage.all(class_obj).items():
+                if db == 'db':
+                    cls_name = key.split('.')[0]
+                    id = key.split('.')[1]
+                    str_format = '[{}] ({}) {}'.format(cls_name, id, value)
+                    lst_db.append(str_format)
+                else:
+                    lst.append(value.__str__())
+            if lst_db:
+                print(lst_db)
+            else:
+                print(lst)
 
     def help_all(self):
         """ Help information for the all command """
