@@ -44,8 +44,8 @@ class DBStorage:
                         dic_table.update(dict(zip(table_column, list(row))))
                         if '_sa_instance_state' in dic_table.keys():
                             dic_table.pop('_sa_instance_state')
-                        return_dict["{}.{}".format(mapped_class[table_name], row.id)]\
-                            = dic_table
+                        return_dict["{}.{}".format(mapped_class[table_name],
+                                                   row.id)] = dic_table
             return return_dict
 
         else:

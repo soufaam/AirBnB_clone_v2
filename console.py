@@ -140,7 +140,12 @@ class HBNBCommand(cmd.Cmd):
                     elif '.' in value and len(value.split('.')) == 2:
                         arg_dic[key] = float(value)
             new_instance = HBNBCommand.classes[result[0]]()
+            dic = new_instance.to_dict()
+            if '_sa_instance_state' in dic.keys():
+                dic.pop('_sa_instance_state')
             new_instance.__dict__.update(arg_dic)
+            if '_sa_instance_state' in new_instance.__dict__.keys():
+                new_instance.__dict__.pop('_sa_instance_state')
             storage.save()
             new_instance.save()
         print(new_instance.id)
