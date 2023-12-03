@@ -14,7 +14,7 @@ class DBStorage:
 
     def __init__(self) -> None:
         """Init constructor method"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:13306/{}'
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
                                       .format(os.environ['HBNB_MYSQL_USER'],
                                               os.environ['HBNB_MYSQL_PWD'],
                                               os.environ['HBNB_MYSQL_HOST'],
