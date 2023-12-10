@@ -9,4 +9,6 @@ def do_pack():
     """A function that generates a .tgz archive"""
     local("if ! [ -d versions ]; then mkdir versions; fi")
     output = local("date +%Y%m%d%M%S", capture=True)
-    local(f'tar -cvzf ./versions/web_static_{output}.tgz ./web_static')
+    value = local(f'tar -cvzf ./versions/web_static_{output}.tgz\
+ ./web_static', capture=True)
+    return value
