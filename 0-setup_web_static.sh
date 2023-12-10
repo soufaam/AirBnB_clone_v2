@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #sets up your web servers for the deployment of web_static
-sudo apt update
-sudo apt install nginx -y
+sudo apt update >/dev/null
+sudo apt install nginx -y >/dev/null
 sudo mkdir -p /data/web_static/releases/test/
 sudo mkdir -p /data/web_static/shared/
 sudo bash -c 'cat  >/data/web_static/releases/test/index.html <<EOF
@@ -24,16 +24,16 @@ sudo chown -R ubuntu:ubuntu /data/*
 site_config="/etc/nginx/sites-enabled/mysite.conf"
 web_static_path="/data/web_static/current/"
 alias_path="/hbnb_static"
-domain="souf.tech"
 # Check if the configuration block already exists
-if ! [ -f "$site_config" ]; then 
+if  [ -f "$site_config" ]; then 
+   sudo rm "$site_config"
    sudo touch "$site_config"
 fi
 if ! grep -q "location $alias_path {" "$site_config"; then
     # Append the configuration block
-    echo "server { 
+    sudo echo "server { 
         listen 80;
-        server_name $domain;
+        server_name localhost;
         location $alias_path {
             alias $web_static_path;
         }
@@ -47,7 +47,7 @@ if ! grep -q "location $alias_path {" "$site_config"; then
             root /usr/share/nginx/html;
             internal;
         }
-    }" > "$site_config"
+    }"| tee -a "$site_config"
 fi
 
 # Restart Nginx
