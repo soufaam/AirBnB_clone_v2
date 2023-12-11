@@ -6,6 +6,7 @@ from fabric.api import run, env
 from fabric import Connection
 import os
 
+""" Fabric script (based on"""
 env.user = 'ubuntu'
 env.hosts = ["54.152.81.82", "3.94.185.211"]
 env.ssh_key = "~/.ssh/school"
