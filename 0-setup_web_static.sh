@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
-#sets up your web servers for the deployment of web_static
-sudo apt update >/dev/null
-sudo apt install nginx -y >/dev/null
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared/
-sudo bash -c 'cat  >/data/web_static/releases/test/index.html <<EOF
+# Sets up your web servers for the deployment of web_static.
+
+# Install Nginx Web Server
+sudo apt -y update
+sudo apt install -y nginx
+
+mkdir -p /data/
+mkdir -p /data/web_static/
+mkdir -p /data/web_static/releases/
+mkdir -p /data/web_static/shared/
+mkdir -p /data/web_static/releases/test/
+touch /data/web_static/releases/test/index.html
+printf %s "
 <html>
   <head>
   </head>
@@ -12,43 +19,42 @@ sudo bash -c 'cat  >/data/web_static/releases/test/index.html <<EOF
     Holberton School
   </body>
 </html>
-EOF'
-target="/data/web_static/releases/test/"
-link_path="/data/web_static/current"
-if [ -L "$link_path" ]; then
-    sudo rm "$link_path"
-fi
-sudo ln -s "$target" "$link_path"
-sudo chown -R ubuntu:ubuntu /data/*
+" > /data/web_static/releases/test/index.html
 
-site_config="/etc/nginx/sites-enabled/mysite.conf"
-web_static_path="/data/web_static/current/"
-alias_path="/hbnb_static"
-# Check if the configuration block already exists
-if  [ -f "$site_config" ]; then 
-   sudo rm "$site_config"
-   sudo touch "$site_config"
-fi
-if ! grep -q "location $alias_path {" "$site_config"; then
-    # Append the configuration block
-    sudo echo "server { 
+ln -sf /data/web_static/releases/test /data/web_static/current
+
+chown -R ubuntu:ubuntu /data/
+
+touch default
+printf %s "server {
         listen 80;
-        server_name localhost;
-        location $alias_path {
-            alias $web_static_path;
+        listen [::]:80;
+        add_header X-Served-By $HOSTNAME;
+
+        root /var/www/school;
+        index index.html;
+
+        location /redirect_me {
+            return 301 https://youtube.com;
         }
 
-        # Additional Nginx configuration...
-
-        # Include other configurations or server blocks if necessary.
+        location /hbnb_static/ {
+            alias /data/web_static/current/;
+            index index.html;
+        }
 
         error_page 404 /404.html;
         location = /404.html {
-            root /usr/share/nginx/html;
-            internal;
+            root /var/www/school/errors/;
         }
-    }"| tee -a "$site_config"
-fi
+}
+" > default
 
-# Restart Nginx
+# Remove and replace existing configurations
+sudo rm -rf /etc/nginx/sites-available/default
+sudo rm -rf /etc/nginx/sites-enabled/default
+sudo mv default /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+# Restart nginx
 sudo service nginx restart
