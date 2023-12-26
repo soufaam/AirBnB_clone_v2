@@ -16,7 +16,14 @@ def hello():
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
+    """/hbnb: display “HBNB”"""
     return ("HBNB")
+
+
+@app.route('/c/<text>', strict_slashes=False)
+def cisfun(text):
+    """display “C ” followed by the value of the text """
+    return (f"c {text.replace('_', ' ')}")
 
 
 if __name__ == '__main__':
