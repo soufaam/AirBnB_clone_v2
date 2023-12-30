@@ -39,7 +39,7 @@ class DBStorage:
                         "states": "State",
                         "users": "User"}
         db_items = self.__metadata.tables.items()
-        
+
         if cls is None:
             objs = self.__session.query(State).all()
             objs.extend(self.__session.query(City).all())
