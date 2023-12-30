@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from os import getenv
 
+
 class State(BaseModel, Base):
     """ State class """
 
