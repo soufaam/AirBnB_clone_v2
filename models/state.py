@@ -31,4 +31,4 @@ class State(BaseModel, Base):
                         related_cities.append[city]
             return related_cities
 
-    cities = relationship("City", back_populates="state", lazy="dynamic")
+    cities = relationship("City",  backref="state", cascade="delete")
