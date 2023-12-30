@@ -5,6 +5,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 import os
 from models.base_model import Base
+from models.amenity import Amenity
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.user import User
 
 
 class DBStorage:
@@ -33,29 +39,19 @@ class DBStorage:
                         "states": "State",
                         "users": "User"}
         db_items = self.__metadata.tables.items()
-
+        
         if cls is None:
-            for table_name, table in db_items:
-                table_column = self.__metadata.tables[table_name].c.keys()
-                if table_name in mapped_class.keys():
-                    query = self.__session.query(table).all()
-                    dic_table = {}
-                    for row in query:
-                        dic_table.update(dict(zip(table_column, list(row))))
-                        if '_sa_instance_state' in dic_table.keys():
-                            dic_table.pop('_sa_instance_state')
-                        return_dict["{}.{}".format(mapped_class[table_name],
-                                                   row.id)] = dic_table
-            return return_dict
-
+            objs = self.__session.query(State).all()
+            objs.extend(self.__session.query(City).all())
+            objs.extend(self.__session.query(User).all())
+            objs.extend(self.__session.query(Place).all())
+            objs.extend(self.__session.query(Review).all())
+            objs.extend(self.__session.query(Amenity).all())
         else:
-            query = self.__session.query(cls)
-            for row in query:
-                dic = dict(row.__dict__)
-                if '_sa_instance_state' in dic:
-                    dic.pop('_sa_instance_state')
-                return_dict[f'{cls.__name__}.{row.id}'] = dic
-            return return_dict
+            if type(cls) == str:
+                cls = eval(cls)
+            objs = self.__session.query(cls)
+        return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
 
     def save(self):
         """save(self): commit all changes of the
@@ -72,7 +68,7 @@ class DBStorage:
         """delete(self, obj=None): delete from
         the current database session obj if not None"""
         if obj is not None:
-            self.__session(obj)
+            self.__session.delete(obj)
             self.save()
 
     def reload(self):
@@ -90,7 +86,8 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine,
                                        expire_on_commit=False)
-        self.__session = scoped_session(session_factory)
+        Session = scoped_session(session_factory)
+        self.__session = Session()
 
     def close(self):
         """A method on the private session attribute
