@@ -70,3 +70,9 @@ class FileStorage:
         key = "{}.{}".format(obj_dict['__class__'], obj_dict['id'])
         if key in all_dict:
             all_dict.pop(key)
+
+    def close(self):
+        """A method for deserializing the JSON file to objects"""
+        self.reload()
+
+    
