@@ -20,7 +20,7 @@ class DBStorage:
 
     def __init__(self) -> None:
         """Init constructor method"""
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}:13306/{}'
                                       .format(os.environ['HBNB_MYSQL_USER'],
                                               os.environ['HBNB_MYSQL_PWD'],
                                               os.environ['HBNB_MYSQL_HOST'],
@@ -62,14 +62,12 @@ class DBStorage:
         """add the object to the current
         database session (self.__session)"""
         self.__session.add(obj)
-        self.save()
 
     def delete(self, obj=None):
         """delete(self, obj=None): delete from
         the current database session obj if not None"""
         if obj is not None:
             self.__session.delete(obj)
-            self.save()
 
     def reload(self):
         """create all tables in the database
